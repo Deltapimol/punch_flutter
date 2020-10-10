@@ -44,16 +44,17 @@ class _PunchState extends State<Punch> {
 
   Future<void> punchRequest() async {
     ConfigClass config = ConfigClass();
-    print("URL " + config.getBaseUrl() + "/api/v1/contoller/punch");
-    print("IN LOGOUT! " +
+    print("URL " + config.getBaseUrl() + "/api/v1/controller/punch");
+    print("IN PUNCH! " +
         sharedPreferences.getString("token") +
         " " +
         sharedPreferences.getString("unique_id"));
     Map data = {"unique_id": sharedPreferences.getString("unique_id")};
     String body = json.encode(data);
+    print(body);
     try {
       final response = await http.post(
-        config.getBaseUrl() + "/api/v1/contoller/punch",
+        config.getBaseUrl() + "/api/v1/controller/punch",
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token " + sharedPreferences.getString("token")
@@ -147,20 +148,22 @@ class _PunchState extends State<Punch> {
                       direction: Axis.vertical,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        Text(
+                          'Counter : $_punchCount\n',
+                          style: TextStyle(fontSize: 25, color: Colors.white),
+                        ),
                         RawMaterialButton(
                           onPressed: () => Punch(),
                           constraints: BoxConstraints(),
-                          elevation: 2.0,
+                          elevation: 4.0,
                           fillColor: Colors.white,
                           child: Icon(
                             Icons.add,
-                            size: 40.0,
+                            size: 50.0,
                           ),
                           padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
-                        //Text('Scan result : $_scanBarcode\n',
-                        // style: TextStyle(fontSize: 20))
                       ]));
             })));
   }
