@@ -10,11 +10,19 @@ class ConfigClass {
       "http://ec2-15-206-151-112.ap-south-1.compute.amazonaws.com";
   String _token;
   String _deviceIdentity = "";
-
+  String _currentUser;
   final DeviceInfoPlugin _deviceInfoPlugin = new DeviceInfoPlugin();
   getBaseUrl() {
     print("IN CONFIG get!!!");
     return _baseUrl;
+  }
+
+  setCurrentUser(String user) {
+    this._currentUser = user;
+  }
+
+  getCurrentUser() {
+    return _currentUser;
   }
 
   setToken(String token) {

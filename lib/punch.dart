@@ -7,14 +7,17 @@ import './login.dart';
 import './config.dart';
 
 class Punch extends StatefulWidget {
+  final String currentUser;
+  Punch({Key key, this.currentUser}) : super(key: key);
   @override
-  _PunchState createState() => _PunchState();
+  _PunchState createState() => _PunchState(user: currentUser);
 }
 
 class _PunchState extends State<Punch> {
+  String user = "";
+  _PunchState({this.user});
   int _punchCount = 0;
   SharedPreferences sharedPreferences;
-
   @override
   void initState() {
     super.initState();
@@ -63,7 +66,7 @@ class _PunchState extends State<Punch> {
       );
       print("STATUS CODE");
       print(response.statusCode);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         print("PUNCH DONE?");
       } else {
         throw Exception('Failed to punch');
@@ -117,7 +120,7 @@ class _PunchState extends State<Punch> {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
-              title: const Text('Home'),
+              title: Text('User : $user'),
               actions: <Widget>[
                 RaisedButton(
                   onPressed: () {
@@ -129,11 +132,11 @@ class _PunchState extends State<Punch> {
                             builder: (BuildContext context) => LoginScreen()),
                         (Route<dynamic> route) => false);
                   },
-                  color: Color.alphaBlend(Colors.lime, Colors.red),
+                  color: Color.alphaBlend(Colors.red, Colors.white),
                   child: Text(
                     "Logout",
                     style: TextStyle(
-                        color: Colors.red,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 20),
                   ),

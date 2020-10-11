@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String _scanBarcode = 'Unknown';
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -34,9 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
       barcodeScanRes = 'Failed to get platform version.';
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
 
     setState(() {
@@ -59,24 +56,25 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       print('TOKEN get??' + response.body);
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      //return Login.fromJson(jsonDecode(response.body));
       var jsonResponse = json.decode(response.body);
       sharedPreferences.setString("token", jsonResponse['token']);
       sharedPreferences.setString("unique_id", jsonResponse['unique_id']);
+      String user =
+          jsonResponse['first_name'] + " " + jsonResponse['last_name'];
       print('TOKEN get??' +
           jsonResponse['token'] +
           " " +
           jsonResponse['unique_id']);
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => Punch()),
+          MaterialPageRoute(
+              builder: (BuildContext context) => Punch(currentUser: user)),
           (Route<dynamic> route) => false);
     } else {
       print('TOKEN no');
+      _loginFailed();
       throw Exception('Failed to login');
     }
   }
@@ -85,7 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-            appBar: AppBar(title: const Text('Login')),
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: const Text('Login Page'),
+              centerTitle: true,
+            ),
             body: Builder(builder: (BuildContext context) {
               return Container(
                   alignment: Alignment.center,
@@ -96,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         RaisedButton(
                             autofocus: true,
                             color: Color.alphaBlend(
-                                Colors.white10, Colors.black12),
+                                Colors.lightGreen, Colors.lightGreen),
                             onPressed: () => scanQR(),
                             child:
                                 Text("Login", style: TextStyle(fontSize: 20)),
@@ -106,5 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         // style: TextStyle(fontSize: 20))
                       ]));
             })));
+  }
+
+  Future<void> _loginFailed() async {
+    print("##### IN LOGIN FAILED!");
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: new Text('Could not login. Try again.'),
+      duration: new Duration(seconds: 5),
+    ));
+    throw 'Could not login.';
   }
 }
