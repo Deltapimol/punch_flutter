@@ -68,10 +68,40 @@ class _LoginScreenState extends State<LoginScreen> {
           jsonResponse['token'] +
           " " +
           jsonResponse['unique_id']);
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (BuildContext context) => Punch(currentUser: user)),
-          (Route<dynamic> route) => false);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: Container(
+                  // use container to change width and height
+                  height: 100,
+                  width: 300,
+                  child: Column(children: <Widget>[
+                    Stack(
+                      alignment: FractionalOffset.center,
+                      children: <Widget>[
+                        new CircularProgressIndicator(
+                          backgroundColor: Colors.red,
+                        ),
+                      ],
+                    ),
+                    new Text(
+                      "\nLogging In",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  ])));
+        },
+      );
+      new Future.delayed(new Duration(seconds: 3), () {
+        Navigator.pop(context); //pop dialog
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (BuildContext context) => Punch(currentUser: user)),
+            (Route<dynamic> route) => false);
+      });
     } else {
       print('TOKEN no');
       _loginFailed();
